@@ -13,7 +13,7 @@ def get_Redshift_connection(autocommit=True):
     return conn.cursor()
 
 @task
-def get_country_info():
+def extract_transform():
     r = requests.get('https://restcountries.com/v3/all')
     rj = r.json()
     records = []
@@ -26,12 +26,12 @@ def get_country_info():
     
     return records
 
-def _create_table(cur, schema, table):
+def create_table(cur, schema, table):
     cur.execute(f"DROP TABLE IF EXISTS {schema}.{table}")
     cur.execute(f"""
         CREATE TABLE {schema}.{table} (
-            country varchar(100),
-            population bigint,
+            country varchar(256),
+            population int,
             area float
         );               
     """)
@@ -42,12 +42,12 @@ def load(schema, table, records):
     cur = get_Redshift_connection()
     try:
         cur.execute("BEGIN;")
-        _create_table(cur, schema, table)
+        create_table(cur, schema, table)
         
         for r in records:
-            sql = f'INSERT INTO {schema}.{table} (country, population, area) VALUES ("{r[0]}", {r[1]}, {r[2]});'
-            print(sql)
-            cur.execute(sql)
+            sql = f'INSERT INTO {schema}.{table} VALUES (%s, %s::bigint, %s);'
+            print(sql, (r[0], r[1], r[2]))
+            cur.execute(sql, (r[0], r[1], r[2]))
         cur.execute("COMMIT;")
     except Exception as error:
         print(error)
@@ -63,5 +63,5 @@ with DAG (
     schedule='30 6 * * 6'  # 매주 토요일 오전 6시 30분
 ) as dag:
     
-    results = get_country_info()
+    results = extract_transform()
     load('leebk1124', 'country_info', results)

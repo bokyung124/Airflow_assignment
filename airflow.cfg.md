@@ -69,6 +69,9 @@ sudo systemctl restart airflow-webserver
 sudo systemctl restart airflow-scheduler
 ```
 
+<br>
+
+- `airflow db init`은 백엔드나 Metadata DB가 바뀐 것과 같이 큰 변경이 생긴 경우에만 사용
 
 
 ## 6) Metadata DB의 내용을 암호화하는데 사용되는 키는 무엇인가?

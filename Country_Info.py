@@ -7,7 +7,7 @@ import logging
 import requests
 
 def get_Redshift_connection(autocommit=True):
-    hook = PostgresHook(postgres_conn_id='redshift_dev_db')
+    hook = PostgresHook(postgres_conn_id='***')
     conn = hook.get_conn()
     conn.autocommit = autocommit
     return conn.cursor()
@@ -64,4 +64,4 @@ with DAG (
 ) as dag:
     
     results = extract_transform()
-    load('leebk1124', 'country_info', results)
+    load('***', 'country_info', results)

@@ -7,6 +7,10 @@
 
 - `created_date` 컬럼을 만들어 primary key인 `date` 값이 같은 경우에 더 최근의 정보만 저장하도록!
     - sql의 `ROW_NUMBER()` 이용
+
+- `DISTINCT` 방식의 중복 처리는 데이터 소스에 따라 이상 동작할 수 있음
+
+<br>
     
 
 ```sql

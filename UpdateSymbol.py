@@ -52,6 +52,7 @@ def load(schema, table, records):
     create_t_sql = f"""CREATE TEMP TABLE t AS SELECT * FROM {schema}.{table};"""
     logging.info(create_t_sql)
     try:
+        cur.execute("BEGIN;")
         cur.execute(create_table_sql)
         cur.execute(create_t_sql)
         cur.execute("COMMIT;")
@@ -63,6 +64,7 @@ def load(schema, table, records):
     insert_sql = f"INSERT INTO t VALUES " + ",".join(records)
     logging.info(insert_sql)
     try:
+        cur.execute("BEGIN;")
         cur.execute(insert_sql)
         cur.execute("COMMIT;")
     except Exception as e:
@@ -82,6 +84,7 @@ def load(schema, table, records):
     """
     logging.info(alter_sql)
     try:
+        cur.execute("BEGIN;")
         cur.execute(alter_sql)
         cur.execute("COMMIT;")
     except Exception as e:
